@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="NOVA BARBERÍA: cortes profesionales, turnos, clientes, personal y finanzas en un solo lugar.">
 <title>NOVA BARBERÍA | Prototipo de gestión</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2.4'%3E%3Cpath d='M4 7l3-1 2-3M20 7l-3-1-2-3M9 3h6M5 10l1.8 3M19 10l-1.8 3M7.5 20l.7-4h7.6l.7 4'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2.4'%3E%3Cpath d='M4 7l3-1 2-3M20 7l-3-1-2-3M9 3h6M5 10l1.8 3M19 10l-1.8 3M7.5 20l.7-4h7.6l.7 4'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./app.css">
 <link rel="stylesheet" href="./estilos.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
             <a href="#" @click.prevent="irA('turnos')" class="nav-link" :class="view==='turnos' && 'active'">
                 <span class="relative inline-flex items-center gap-1.5">
                     Turnos
-                    <span class="absolute -right-3 top-0 h-1.5 w-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_rgba(52,211,153,.9)]"></span>
+                    <span class="absolute -right-3 top-0 h-1.5 w-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_rgba(251,191,36,.9)]"></span>
                 </span>
             </a>
             <a href="#" @click.prevent="irA('clientes')" class="nav-link" :class="view==='clientes' && 'active'">Clientes</a>
@@ -261,7 +261,7 @@
                         <p>Instagram: <a class="text-gold-200 underline decoration-gold-500/50 underline-offset-4 hover:text-white" href="https://www.instagram.com/nova.gym/" target="_blank" rel="noopener">@nova.barberia</a></p>
                     </div>
                     <div class="panel-card mt-8 flex items-center gap-4 p-5">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-4.4-6.5-9.6A6.5 6.5 0 0 1 12 5a6.5 6.5 0 0 1 6.5 6.4C18.5 16.6 12 21 12 21Z"/><circle cx="12" cy="11" r="2.2"/></svg></div>
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-4.4-6.5-9.6A6.5 6.5 0 0 1 12 5a6.5 6.5 0 0 1 6.5 6.4C18.5 16.6 12 21 12 21Z"/><circle cx="12" cy="11" r="2.2"/></svg></div>
                         <div>
                             <p class="font-bold">Lunes a sábado: 9:00 – 13:00 · 16:00 – 21:00 · Domingos: cerrado</p>
                             <p class="text-sm text-dim mt-0.5">Agendá tu turno desde el módulo Turnos en cualquier momento.</p>
@@ -389,16 +389,16 @@
                             <p class="stat-sub">Próximos a confirmar</p>
                         </div>
                     </div>
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></div>
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></div>
                         <div>
                             <p class="stat-num" x-text="statsTurnos().completados"></p>
                             <p class="stat-label">Completados hoy</p>
                             <p class="stat-sub">Cortes realizados</p>
                         </div>
                     </div>
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6"/></svg></div>
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6"/></svg></div>
                         <div>
                             <p class="stat-num" x-text="'$' + statsTurnos().ingresos.toLocaleString('es-AR')"></p>
                             <p class="stat-label">Ingresos hoy</p>
@@ -551,8 +551,8 @@
                             <p class="stat-sub" x-text="statsClientes().total===1 ? '1 registrado' : statsClientes().total + ' registrados'"></p>
                         </div>
                     </div>
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1"/><circle cx="12" cy="12" r="3.6"/></svg></div>
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1"/><circle cx="12" cy="12" r="3.6"/></svg></div>
                         <div>
                             <p class="stat-num" x-text="statsClientes().nuevos"></p>
                             <p class="stat-label">Nuevos (mes)</p>
@@ -567,8 +567,8 @@
                             <p class="stat-sub">Agendados a futuro</p>
                         </div>
                     </div>
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></div>
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></div>
                         <div>
                             <p class="stat-num" x-text="statsClientes().visitasMes"></p>
                             <p class="stat-label">Visitas (mes)</p>
@@ -683,16 +683,16 @@
                             <p class="stat-sub">Equipo registrado</p>
                         </div>
                     </div>
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l3-1 2-3M20 7l-3-1-2-3M9 3h6M5 10l1.8 3M19 10l-1.8 3M7.5 20l.7-4h7.6l.7 4"/></svg></div>
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l3-1 2-3M20 7l-3-1-2-3M9 3h6M5 10l1.8 3M19 10l-1.8 3M7.5 20l.7-4h7.6l.7 4"/></svg></div>
                         <div>
                             <p class="stat-num" x-text="statsPersonal().barberos"></p>
                             <p class="stat-label">Barberos</p>
                             <p class="stat-sub">Toman turnos</p>
                         </div>
                     </div>
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></div>
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></div>
                         <div>
                             <p class="stat-num" x-text="statsPersonal().activos"></p>
                             <p class="stat-label">Activos</p>
@@ -795,8 +795,8 @@
 
                 <!-- stats -->
                 <div class="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-                    <div class="panel-card stat-card" style="--glow:rgba(52,211,153,.18)">
-                        <div class="stat-icon" style="color:#34d399">
+                    <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                        <div class="stat-icon" style="color:#fbbf24">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>
                         </div>
                         <div>
@@ -845,7 +845,7 @@
                             <h3 class="mt-1 text-xl font-black">Últimos 6 meses</h3>
                         </div>
                         <div class="legend">
-                            <span><i style="background:#34d399"></i> Ingresos</span>
+                            <span><i style="background:#fbbf24"></i> Ingresos</span>
                             <span><i style="background:#f87171"></i> Egresos</span>
                         </div>
                     </div>
