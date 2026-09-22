@@ -278,6 +278,63 @@ table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:
 }
 .text-dim{color:var(--text-dim)}
 
+/* chips de tipo de atención */
+.tipo-chip{
+  display:inline-block;
+  padding:.24rem .6rem;
+  border-radius:.5rem;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  border:1px solid;
+}
+.tipo-chip.tipo-programado{
+  color:#a5b4fc;
+  background:rgba(129,140,248,.1);
+  border-color:rgba(129,140,248,.32);
+}
+.tipo-chip.tipo-walkin{
+  color:#6ee7b7;
+  background:rgba(52,211,153,.1);
+  border-color:rgba(52,211,153,.32);
+}
+
+/* selector de tipo de atención en el modal */
+.tipo-btn{
+  display:flex;
+  gap:.8rem;
+  align-items:flex-start;
+  text-align:left;
+  padding:1rem;
+  border-radius:1rem;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  color:#d4d4d8;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+  cursor:pointer;
+}
+.tipo-btn:hover{border-color:rgba(251,191,36,.4)}
+.tipo-btn.active{
+  background:rgba(251,191,36,.08);
+  border-color:#fbbf24;
+  box-shadow:0 0 0 3px rgba(251,191,36,.12);
+}
+.tipo-btn strong{display:block;font-size:.88rem;color:#f4f4f5}
+.tipo-btn small{display:block;margin-top:.15rem;font-size:.72rem;color:var(--text-dim);line-height:1.4}
+.tipo-btn-ico{
+  flex:none;
+  display:grid;
+  place-items:center;
+  width:2.1rem;
+  height:2.1rem;
+  border-radius:.7rem;
+  background:rgba(255,255,255,.06);
+  color:#fbbf24;
+}
+.tipo-btn.active .tipo-btn-ico{color:#09090b;background:#fbbf24}
+
 /* modales */
 .modal-backdrop{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:1rem;background:rgba(0,0,0,.75);backdrop-filter:blur(5px)}
 .modal{
@@ -377,7 +434,7 @@ table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:
 /* ============================================================
    Módulo Finanzas
    ============================================================ */
-.bar-chart{display:flex;align-items:flex-end;justify-content:space-between;gap:.6rem;height:12rem;padding:.25rem 0}
+.bar-chart{display:flex;align-items:flex-end;justify-content:space-between;gap:.7rem;height:13rem;padding:.4rem 0}
 .bar-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;height:100%;gap:.4rem;min-width:0}
 .bar-pair{display:flex;align-items:flex-end;gap:.3rem;flex:1;min-height:0;width:100%;justify-content:center}
 .bar{width:.9rem;border-radius:.35rem .35rem 0 0;min-height:2px;transition:height .3s ease}
@@ -415,12 +472,12 @@ table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:
 .hero-section{background:
   linear-gradient(90deg,rgba(5,7,13,.9) 0%,rgba(5,7,13,.7) 45%,rgba(5,7,13,.42) 100%),
   radial-gradient(60% 80% at 88% 8%,rgba(245,158,11,.18),transparent 55%),
-  url("./imagenes/imagen2.webp") center/cover no-repeat,
+  url("./imagenes/imagen5.webp") center/cover no-repeat,
   #05070d}
 @media (max-width:900px){
   .hero-section{background:
     linear-gradient(180deg,rgba(5,7,13,.72) 0%,rgba(5,7,13,.88) 55%,rgba(5,7,13,.95) 100%),
-    url("./imagenes/imagen2.webp") center/cover no-repeat,
+    url("./imagenes/imagen5.webp") center/cover no-repeat,
     #05070d}
 }
 
@@ -457,6 +514,8 @@ table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:
 .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .p-4{padding:1rem}
 .p-5{padding:1.25rem}
+.p-6{padding:1.5rem}
+.items-end{align-items:flex-end}
 
 .text-xs{font-size:.75rem;line-height:1rem}
 .text-sm{font-size:.875rem;line-height:1.25rem}
@@ -556,6 +615,7 @@ table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:
   .lg\:mt-0{margin-top:0}
   .lg\:px-8{padding-left:2rem;padding-right:2rem}
   .lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lg\:grid-cols-\[1\.1fr_0\.9fr\]{grid-template-columns:1.1fr .9fr}
 }
 
@@ -624,8 +684,8 @@ footer{background:linear-gradient(180deg,#05070d 0%,#040506 45%,#000 100%)}
 /* ============================================================
    Desglose de gastos por categoría
    ============================================================ */
-.cat-bars{display:grid;gap:.8rem}
-.cat-bar-row{display:grid;grid-template-columns:minmax(7rem,10rem) 1fr auto;align-items:center;gap:.9rem}
+.cat-bars{display:grid;gap:1rem}
+.cat-bar-row{display:grid;grid-template-columns:minmax(7rem,10rem) 1fr auto;align-items:center;gap:1rem}
 .cat-bar-name{font-size:.78rem;font-weight:700;color:#d4d4d8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cat-bar-track{height:.6rem;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
 .cat-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#fbbf24,#b45309);transition:width .5s ease}

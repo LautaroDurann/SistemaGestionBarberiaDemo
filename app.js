@@ -82,8 +82,13 @@ const CATEGORIAS_GASTO = {
   otros: 'Otros',
 };
 
+const TIPOS_ATENCION = {
+  programado: { label: 'Agendado', chip: 'tipo-programado' },
+  walkin: { label: 'Por llegada', chip: 'tipo-walkin' },
+};
+
 /* ---------- paginación ---------- */
-const POR_PAGINA = 12;
+const POR_PAGINA = 8;
 
 /* ---------- cortes base ---------- */
 const CORTES_BASE = [
@@ -147,6 +152,7 @@ function generarDemoTurnos(clientes, personal, cortes) {
         hora: 570 + Math.floor(Math.random() * 24) * 30,
         clienteId: c.id, barberoId: b.id, corteId: cte.id,
         estado: 'completado', fechaCompletado: dias(off),
+        tipo: 'programado',
         notas: '', precio: cte.precio,
       });
     }
@@ -166,6 +172,7 @@ function generarDemoTurnos(clientes, personal, cortes) {
       clienteId: c.id, barberoId: b.id, corteId: cte.id,
       estado,
       fechaCompletado: estado === 'completado' ? hoy : null,
+      tipo: (k === 1 || k === 3) ? 'walkin' : 'programado',
       notas: '', precio: cte.precio,
     });
   }
@@ -184,6 +191,7 @@ function generarDemoTurnos(clientes, personal, cortes) {
         clienteId: c.id, barberoId: b.id, corteId: cte.id,
         estado: Math.random() < 0.5 ? 'pendiente' : 'confirmado',
         fechaCompletado: null,
+        tipo: 'programado',
         notas: '', precio: cte.precio,
       });
     }
@@ -256,6 +264,7 @@ document.addEventListener('alpine:init', () => {
     turnos: [],
     filtroEstadoTurno: 'todos',
     filtroFechaTurno: 'proximos',
+    filtroTipoAtencion: 'todos',
     filtroBarbero: 'todos',
     buscarTurno: '',
     turnoFormAbierto: false,
@@ -281,7 +290,8 @@ document.addEventListener('alpine:init', () => {
       this.formGasto = this.nuevoFormGasto();
 
       const h = (location.hash || '').replace('#', '');
-      if (['cortes', 'clientes', 'turnos', 'personal', 'finanzas'].includes(h)) this.view = h;
+      if (['cortes', 'clientes', 'atenciones', 'personal', 'finanzas'].includes(h)) this.view = h;
+      if (h === 'turnos') this.view = 'atenciones';
 
       const rawC = localStorage.getItem('nova_barber_cortes_v1');
       if (rawC) { try { this.cortes = JSON.parse(rawC); } catch { this.cortes = []; } }
@@ -307,6 +317,7 @@ document.addEventListener('alpine:init', () => {
       this.$watch('buscarTurno', volverPagina1('turnos'));
       this.$watch('filtroEstadoTurno', volverPagina1('turnos'));
       this.$watch('filtroFechaTurno', volverPagina1('turnos'));
+      this.$watch('filtroTipoAtencion', volverPagina1('turnos'));
       this.$watch('filtroBarbero', volverPagina1('turnos'));
       this.$watch('mesFiltro', volverPagina1('gastos'));
     },
@@ -448,7 +459,7 @@ document.addEventListener('alpine:init', () => {
       });
     },
     agendarParaCorte(c) {
-      this.view = 'turnos';
+      this.view = 'atenciones';
       this.formTurno = this.nuevoFormTurno({ corteId: c.id });
       this.editandoTurno = null;
       this.turnoFormAbierto = true;
@@ -684,6 +695,7 @@ document.addEventListener('alpine:init', () => {
       return this.turnos.filter((t) => {
         if (this.filtroEstadoTurno !== 'todos' && t.estado !== this.filtroEstadoTurno) return false;
         if (this.filtroBarbero !== 'todos' && t.barberoId !== this.filtroBarbero) return false;
+        if (this.filtroTipoAtencion !== 'todos' && (t.tipo || 'programado') !== this.filtroTipoAtencion) return false;
         if (this.filtroFechaTurno === 'hoy' && t.fecha !== hoy) return false;
         if (this.filtroFechaTurno === 'proximos' && t.fecha < hoy) return false;
         if (q) {
@@ -703,6 +715,7 @@ document.addEventListener('alpine:init', () => {
     nuevoFormTurno(presets) {
       const b = this.barberosActivos();
       return {
+        tipo: 'programado',
         fecha: hoyISO(),
         hora: 570,
         clienteId: '',
@@ -716,12 +729,17 @@ document.addEventListener('alpine:init', () => {
     abrirFormTurno(t) {
       this.editandoTurno = t;
       this.formTurno = t
-        ? { fecha: t.fecha, hora: t.hora, clienteId: t.clienteId, barberoId: t.barberoId, corteId: t.corteId, estado: t.estado, notas: t.notas || '' }
+        ? { tipo: t.tipo || 'programado', fecha: t.fecha, hora: t.hora, clienteId: t.clienteId, barberoId: t.barberoId, corteId: t.corteId, estado: t.estado, notas: t.notas || '' }
         : this.nuevoFormTurno();
       this.turnoFormAbierto = true;
     },
+    tipoAtencionLabel(tipo) { return (TIPOS_ATENCION[tipo] || TIPOS_ATENCION.programado).label; },
+    tipoAtencionChip(tipo) { return (TIPOS_ATENCION[tipo] || TIPOS_ATENCION.programado).chip; },
+    cambioTipoAtencion() {
+      if (this.formTurno.tipo === 'walkin') this.formTurno.fecha = hoyISO();
+    },
     agendarParaCliente(c) {
-      this.view = 'turnos';
+      this.view = 'atenciones';
       this.formTurno = this.nuevoFormTurno({ clienteId: c.id, corteId: c.corteFavoritoId || '' });
       this.editandoTurno = null;
       this.turnoFormAbierto = true;
@@ -738,6 +756,7 @@ document.addEventListener('alpine:init', () => {
       if (!f.corteId || !corte) { this.mostrarToast('Seleccioná un servicio.'); return; }
       if (!f.fecha) { this.mostrarToast('Completá la fecha.'); return; }
       const datos = {
+        tipo: f.tipo === 'walkin' ? 'walkin' : 'programado',
         fecha: f.fecha, hora: Number(f.hora) || 540,
         clienteId: f.clienteId, barberoId: f.barberoId, corteId: f.corteId,
         estado: f.estado, notas: (f.notas || '').trim(),
@@ -750,27 +769,27 @@ document.addEventListener('alpine:init', () => {
         Object.assign(this.editandoTurno, datos);
         if (this.editandoTurno.estado !== 'completado') this.editandoTurno.fechaCompletado = null;
         this.persistirTurnos();
-        this.mostrarToast('Turno actualizado');
+        this.mostrarToast('Atención actualizada');
       } else {
         this.turnos.push({ id: Date.now(), ...datos });
         this.persistirTurnos();
-        this.mostrarToast('Turno agendado');
+        this.mostrarToast(datos.tipo === 'walkin' ? 'Atención por llegada registrada' : 'Turno agendado');
       }
       this.turnoFormAbierto = false;
     },
     confirmarTurno(t) {
       t.estado = 'confirmado';
       this.persistirTurnos();
-      this.mostrarToast('Turno confirmado');
+      this.mostrarToast('Atención confirmada');
     },
     iniciarTurno(t) {
       t.estado = 'en_proceso';
       this.persistirTurnos();
-      this.mostrarToast('Turno en proceso');
+      this.mostrarToast('Atención en proceso');
     },
     completarTurno(t) {
       const ingreso = t.precio || 0;
-      this.confirmar('Completar turno', `Confirmás que el turno se realizó. Se registra el ingreso de $${ingreso.toLocaleString('es-AR')}.`, () => {
+      this.confirmar('Completar atención', `Confirmás que la atención se realizó. Se registra el ingreso de $${ingreso.toLocaleString('es-AR')}.`, () => {
         t.estado = 'completado';
         t.fechaCompletado = hoyISO();
         this.persistirTurnos();
@@ -778,26 +797,26 @@ document.addEventListener('alpine:init', () => {
       });
     },
     reabrirTurno(t) {
-      this.confirmar('Reabrir turno', 'El turno vuelve a pendiente y se anula el ingreso registrado.', () => {
+      this.confirmar('Reabrir atención', 'La atención vuelve a pendiente y se anula el ingreso registrado.', () => {
         t.estado = 'pendiente';
         t.fechaCompletado = null;
         this.persistirTurnos();
-        this.mostrarToast('Turno reabierto (ingreso anulado)');
+        this.mostrarToast('Atención reabierta (ingreso anulado)');
       }, { peligroso: true });
     },
     cancelarTurno(t) {
-      this.confirmar('Cancelar turno', 'El turno quedará cancelado y saldrá de la agenda activa.', () => {
+      this.confirmar('Cancelar atención', 'La atención quedará cancelada y saldrá de la agenda activa.', () => {
         t.estado = 'cancelado';
         t.fechaCompletado = null;
         this.persistirTurnos();
-        this.mostrarToast('Turno cancelado');
+        this.mostrarToast('Atención cancelada');
       }, { peligroso: true });
     },
     eliminarTurno(t) {
-      this.confirmar('Eliminar turno', 'Este turno se eliminará de forma definitiva del registro.', () => {
+      this.confirmar('Eliminar atención', 'Esta atención se eliminará de forma definitiva del registro.', () => {
         this.turnos = this.turnos.filter((x) => x.id !== t.id);
         this.persistirTurnos();
-        this.mostrarToast('Turno eliminado');
+        this.mostrarToast('Atención eliminada');
       }, { peligroso: true });
     },
 
