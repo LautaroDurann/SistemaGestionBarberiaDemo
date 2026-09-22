@@ -222,6 +222,8 @@ document.addEventListener('alpine:init', () => {
     mobileOpen: false,
     toast: null,
     toastTimer: null,
+    confirmState: null,
+    reporteAbierto: false,
 
     /* cortes */
     cortes: [],
@@ -252,6 +254,7 @@ document.addEventListener('alpine:init', () => {
     filtroEstadoTurno: 'todos',
     filtroFechaTurno: 'proximos',
     filtroBarbero: 'todos',
+    buscarTurno: '',
     turnoFormAbierto: false,
     editandoTurno: null,
     formTurno: null,
@@ -315,6 +318,17 @@ document.addEventListener('alpine:init', () => {
       this.toast = msg;
       clearTimeout(this.toastTimer);
       this.toastTimer = setTimeout(() => (this.toast = null), 2600);
+    },
+    confirmar(titulo, mensaje, onOk, opts) {
+      this.confirmState = { titulo, mensaje, onOk, peligroso: !!(opts && opts.peligroso) };
+    },
+    confirmOk() {
+      const cb = this.confirmState && this.confirmState.onOk;
+      this.confirmState = null;
+      if (typeof cb === 'function') cb();
+    },
+    confirmCancel() {
+      this.confirmState = null;
     },
 
     /* --------------- utilidades --------------- */
@@ -383,16 +397,18 @@ document.addEventListener('alpine:init', () => {
       this.corteFormAbierto = false;
     },
     eliminarCorte(c) {
-      if (!confirm(`¿Eliminar el servicio "${c.nombre}"?`)) return;
-      this.cortes = this.cortes.filter((x) => x.id !== c.id);
-      this.persistirCortes();
-      this.mostrarToast('Servicio eliminado');
+      this.confirmar('Eliminar servicio', `¿Eliminar el servicio "${c.nombre}"? Los turnos ya agendados conservan su importe.`, () => {
+        this.cortes = this.cortes.filter((x) => x.id !== c.id);
+        this.persistirCortes();
+        this.mostrarToast('Servicio eliminado');
+      }, { peligroso: true });
     },
     restaurarCortes() {
-      if (!confirm('¿Restaurar los cortes predeterminados? Se descartan los cambios.')) return;
-      this.cortes = JSON.parse(JSON.stringify(CORTES_BASE));
-      this.persistirCortes();
-      this.mostrarToast('Servicios base restaurados');
+      this.confirmar('Restaurar cortes base', 'Se descartan los cambios y se vuelven a cargar los servicios predeterminados.', () => {
+        this.cortes = JSON.parse(JSON.stringify(CORTES_BASE));
+        this.persistirCortes();
+        this.mostrarToast('Servicios base restaurados');
+      });
     },
     agendarParaCorte(c) {
       this.view = 'turnos';
@@ -495,6 +511,45 @@ document.addEventListener('alpine:init', () => {
         .filter((t) => t.clienteId === c.id)
         .sort((a, b) => (a.fecha === b.fecha ? a.hora - b.hora : String(b.fecha).localeCompare(String(a.fecha))));
     },
+    visitasFechaCliente(c) {
+      return this.turnos
+        .filter((t) => t.clienteId === c.id && t.estado === 'completado')
+        .map((t) => t.fechaCompletado || t.fecha)
+        .filter(Boolean)
+        .sort();
+    },
+    gastoTotalCliente(c) {
+      return this.turnos
+        .filter((t) => t.clienteId === c.id && t.estado === 'completado')
+        .reduce((s, t) => s + (t.precio || 0), 0);
+    },
+    gastoPromedioCliente(c) {
+      const n = this.visitasCliente(c);
+      return n ? this.gastoTotalCliente(c) / n : 0;
+    },
+    frecuenciaCliente(c) {
+      const fechas = [...new Set(this.visitasFechaCliente(c))];
+      if (fechas.length < 2) return null;
+      let suma = 0;
+      for (let i = 1; i < fechas.length; i++) {
+        suma += Math.abs(diasHastaISO(fechas[i]) - diasHastaISO(fechas[i - 1]));
+      }
+      return Math.round(suma / (fechas.length - 1));
+    },
+    frecuenciaClienteLabel(c) {
+      const g = this.frecuenciaCliente(c);
+      if (g === null) return 'Sin datos suficientes';
+      if (g <= 3) return 'Casi a diario';
+      if (g >= 25) return 'Aprox. 1 vez al mes';
+      return `Cada ~${g} días`;
+    },
+    ultimoCorteCliente(c) {
+      const completados = this.turnos
+        .filter((t) => t.clienteId === c.id && t.estado === 'completado')
+        .sort((a, b) => String(b.fechaCompletado || b.fecha).localeCompare(String(a.fechaCompletado || a.fecha)));
+      const ultimo = completados[0];
+      return ultimo ? { nombre: this.corteNombre(ultimo.corteId), fecha: ultimo.fechaCompletado || ultimo.fecha } : null;
+    },
 
     /* --------------- personal --------------- */
     rolLabel(r) { return ROLES[r] || r; },
@@ -588,11 +643,23 @@ document.addEventListener('alpine:init', () => {
     },
     turnosFiltrados() {
       const hoy = hoyISO();
+      const q = this.buscarTurno.trim().toLowerCase();
       return this.turnos.filter((t) => {
         if (this.filtroEstadoTurno !== 'todos' && t.estado !== this.filtroEstadoTurno) return false;
         if (this.filtroBarbero !== 'todos' && t.barberoId !== this.filtroBarbero) return false;
         if (this.filtroFechaTurno === 'hoy' && t.fecha !== hoy) return false;
         if (this.filtroFechaTurno === 'proximos' && t.fecha < hoy) return false;
+        if (q) {
+          const cl = this.clientePorId(t.clienteId);
+          const ba = this.personalPorId(t.barberoId);
+          const cte = this.cortePorId(t.corteId);
+          const texto = [
+            cl && `${cl.nombre} ${cl.apellido}`,
+            ba && `${ba.nombre} ${ba.apellido}`,
+            cte && cte.nombre,
+          ].filter(Boolean).join(' ').toLowerCase();
+          if (!texto.includes(q)) return false;
+        }
         return true;
       }).sort((a, b) => (a.fecha === b.fecha ? a.hora - b.hora : String(a.fecha).localeCompare(String(b.fecha))));
     },
@@ -665,31 +732,36 @@ document.addEventListener('alpine:init', () => {
       this.mostrarToast('Turno en proceso');
     },
     completarTurno(t) {
-      if (!confirm(`¿Marcar como completado? Se registra el ingreso de $${(t.precio || 0).toLocaleString('es-AR')}.`)) return;
-      t.estado = 'completado';
-      t.fechaCompletado = hoyISO();
-      this.persistirTurnos();
-      this.mostrarToast(`Corte completado — ingreso $${(t.precio || 0).toLocaleString('es-AR')}`);
+      const ingreso = t.precio || 0;
+      this.confirmar('Completar turno', `Confirmás que el turno se realizó. Se registra el ingreso de $${ingreso.toLocaleString('es-AR')}.`, () => {
+        t.estado = 'completado';
+        t.fechaCompletado = hoyISO();
+        this.persistirTurnos();
+        this.mostrarToast(`Corte completado — ingreso $${ingreso.toLocaleString('es-AR')}`);
+      });
     },
     reabrirTurno(t) {
-      if (!confirm('¿Reabrir este turno? Se anula el ingreso registrado.')) return;
-      t.estado = 'pendiente';
-      t.fechaCompletado = null;
-      this.persistirTurnos();
-      this.mostrarToast('Turno reabierto (ingreso anulado)');
+      this.confirmar('Reabrir turno', 'El turno vuelve a pendiente y se anula el ingreso registrado.', () => {
+        t.estado = 'pendiente';
+        t.fechaCompletado = null;
+        this.persistirTurnos();
+        this.mostrarToast('Turno reabierto (ingreso anulado)');
+      }, { peligroso: true });
     },
     cancelarTurno(t) {
-      if (!confirm('¿Cancelar este turno?')) return;
-      t.estado = 'cancelado';
-      t.fechaCompletado = null;
-      this.persistirTurnos();
-      this.mostrarToast('Turno cancelado');
+      this.confirmar('Cancelar turno', 'El turno quedará cancelado y saldrá de la agenda activa.', () => {
+        t.estado = 'cancelado';
+        t.fechaCompletado = null;
+        this.persistirTurnos();
+        this.mostrarToast('Turno cancelado');
+      }, { peligroso: true });
     },
     eliminarTurno(t) {
-      if (!confirm('¿Eliminar este turno?')) return;
-      this.turnos = this.turnos.filter((x) => x.id !== t.id);
-      this.persistirTurnos();
-      this.mostrarToast('Turno eliminado');
+      this.confirmar('Eliminar turno', 'Este turno se eliminará de forma definitiva del registro.', () => {
+        this.turnos = this.turnos.filter((x) => x.id !== t.id);
+        this.persistirTurnos();
+        this.mostrarToast('Turno eliminado');
+      }, { peligroso: true });
     },
 
     /* --------------- finanzas --------------- */
@@ -752,6 +824,34 @@ document.addEventListener('alpine:init', () => {
       return v > 0 ? Math.max(8, (v / this.chartMax()) * 100) : 2;
     },
     categoriaGastoLabel(cat) { return CATEGORIAS_GASTO[cat] || cat; },
+    categoriaGastoColor(cat) {
+      const colores = {
+        alquiler: '#7dd3fc',
+        servicios: '#c4b5fd',
+        sueldos: '#fbbf24',
+        insumos: '#fcd34d',
+        equipamiento: '#f9a8d4',
+        marketing: '#fdba74',
+      };
+      return colores[cat] || '#e4e4e7';
+    },
+    gastosPorCategoria(clave) {
+      const mapa = {};
+      this.gastosMes(clave).forEach((g) => {
+        if (!mapa[g.categoria]) {
+          mapa[g.categoria] = { cat: g.categoria, label: this.categoriaGastoLabel(g.categoria), total: 0, cantidad: 0 };
+        }
+        mapa[g.categoria].total += g.monto || 0;
+        mapa[g.categoria].cantidad += 1;
+      });
+      const total = Object.values(mapa).reduce((s, o) => s + o.total, 0);
+      return Object.values(mapa)
+        .sort((a, b) => b.total - a.total)
+        .map((o) => ({ ...o, pct: total ? Math.round((o.total / total) * 100) : 0 }));
+    },
+    abrirReporte() {
+      this.reporteAbierto = true;
+    },
     categoriaGastoBadge(cat) {
       if (cat === 'alquiler') return 'cat-alquiler';
       if (cat === 'servicios') return 'cat-servicios';
@@ -805,10 +905,11 @@ document.addEventListener('alpine:init', () => {
       this.liquidacionDe = null;
     },
     eliminarGasto(g) {
-      if (!confirm('¿Eliminar este gasto?')) return;
-      this.gastos = this.gastos.filter((x) => x.id !== g.id);
-      this.persistirGastos();
-      this.mostrarToast('Gasto eliminado');
+      this.confirmar('Eliminar gasto', `¿Eliminar "${g.descripcion}" por $${(g.monto || 0).toLocaleString('es-AR')}?`, () => {
+        this.gastos = this.gastos.filter((x) => x.id !== g.id);
+        this.persistirGastos();
+        this.mostrarToast('Gasto eliminado');
+      }, { peligroso: true });
     },
 
     /* --------------- persistencia --------------- */
@@ -819,38 +920,54 @@ document.addEventListener('alpine:init', () => {
     persistirGastos() { localStorage.setItem('nova_barber_gastos_v1', JSON.stringify(this.gastos)); },
 
     cargarDemo() {
-      if (!this.personal.filter((p) => p.rol === 'barbero').length) this.personal = JSON.parse(JSON.stringify(PERSONAL_BASE));
-      this.clientes = generarDemoClientes();
-      this.turnos = generarDemoTurnos(this.clientes, this.personal, this.cortes);
-      this.gastos = generarDemoGastos();
-      this.persistirPersonal();
-      this.persistirClientes();
-      this.persistirTurnos();
-      this.persistirGastos();
-      this.mostrarToast('Datos de ejemplo cargados');
+      const aplicar = () => {
+        if (!this.personal.filter((p) => p.rol === 'barbero').length) this.personal = JSON.parse(JSON.stringify(PERSONAL_BASE));
+        this.clientes = generarDemoClientes();
+        this.turnos = generarDemoTurnos(this.clientes, this.personal, this.cortes);
+        this.gastos = generarDemoGastos();
+        this.persistirPersonal();
+        this.persistirClientes();
+        this.persistirTurnos();
+        this.persistirGastos();
+        this.mostrarToast('Datos de ejemplo cargados');
+      };
+      if (this.clientes.length || this.turnos.length || this.gastos.length) {
+        this.confirmar('Cargar datos demo', 'Ya hay datos cargados. La demo reemplazará clientes, turnos y gastos actuales.', aplicar, { peligroso: true });
+      } else {
+        aplicar();
+      }
     },
     cargarDemoGastos() {
-      this.gastos = generarDemoGastos();
-      this.persistirGastos();
-      this.mostrarToast('Gastos de ejemplo cargados');
+      const aplicar = () => {
+        this.gastos = generarDemoGastos();
+        this.persistirGastos();
+        this.mostrarToast('Gastos de ejemplo cargados');
+      };
+      if (this.gastos.length) {
+        this.confirmar('Cargar gastos demo', 'Ya hay gastos cargados. La demo reemplazará la lista actual.', aplicar, { peligroso: true });
+      } else {
+        aplicar();
+      }
     },
     vaciarDatos() {
-      if (!confirm('¿Vaciar clientes, turnos, personal y gastos? Esta acción no se puede deshacer.')) return;
-      this.clientes = [];
-      this.turnos = [];
-      this.gastos = [];
-      this.personal = [];
-      this.persistirClientes();
-      this.persistirTurnos();
-      this.persistirGastos();
-      this.persistirPersonal();
-      this.mostrarToast('Base de datos vaciada');
+      this.confirmar('Vaciar base de datos', 'Se eliminarán clientes, turnos, personal y gastos. Esta acción no se puede deshacer.', () => {
+        this.clientes = [];
+        this.turnos = [];
+        this.gastos = [];
+        this.personal = [];
+        this.persistirClientes();
+        this.persistirTurnos();
+        this.persistirGastos();
+        this.persistirPersonal();
+        this.mostrarToast('Base de datos vaciada');
+      }, { peligroso: true });
     },
     vaciarGastos() {
-      if (!confirm('¿Eliminar todos los gastos?')) return;
-      this.gastos = [];
-      this.persistirGastos();
-      this.mostrarToast('Gastos vaciados');
+      this.confirmar('Vaciar gastos', 'Se eliminarán todos los gastos registrados. Esta acción no se puede deshacer.', () => {
+        this.gastos = [];
+        this.persistirGastos();
+        this.mostrarToast('Gastos vaciados');
+      }, { peligroso: true });
     },
   }));
 });

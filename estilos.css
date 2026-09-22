@@ -409,6 +409,7 @@ table.admin-table{width:100%;border-collapse:collapse;min-width:820px;font-size:
 .object-contain{object-fit:contain}
 .tracking-widest{letter-spacing:.1em}
 .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}
+.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
 .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -567,10 +568,83 @@ footer{background:linear-gradient(180deg,#05070d 0%,#040506 45%,#000 100%)}
 .agenda-mini .time-col{flex:none;text-align:center;min-width:4.4rem}
 .agenda-mini .time-col strong{display:block;font-family:"Sora",system-ui,sans-serif;font-size:1rem;color:#fbbf24;font-variant-numeric:tabular-nums}
 .agenda-mini .time-col small{font-size:.64rem;color:#71717a;text-transform:uppercase;letter-spacing:.06em}
-.agenda-mini .agenda-line{border-left:2px solid rgba(245,158,11,.3);padding-left:.9rem}===Bloque generado: acento dorado (gold) sobre fondo negro===
+.agenda-mini .agenda-line{border-left:2px solid rgba(245,158,11,.3);padding-left:.9rem}
+
+/* acento dorado (gold) sobre fondo negro */
 .text-gold-200{color:#fde68a}
 .text-gold-300{color:#fcd34d}
 .hover\:text-gold-300:hover{color:#fcd34d}
 .bg-gold-400{background-color:#fbbf24}
 .bg-gold-500\/15{background-color:rgba(245,158,11,.15)}
+.border-gold-400\/30{border-color:rgba(251,191,36,.3)}
 .decoration-gold-500\/50{text-decoration-color:rgba(245,158,11,.5)}
+
+/* ============================================================
+   Desglose de gastos por categoría
+   ============================================================ */
+.cat-bars{display:grid;gap:.8rem}
+.cat-bar-row{display:grid;grid-template-columns:minmax(7rem,10rem) 1fr auto;align-items:center;gap:.9rem}
+.cat-bar-name{font-size:.78rem;font-weight:700;color:#d4d4d8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-bar-track{height:.6rem;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#fbbf24,#b45309);transition:width .5s ease}
+.cat-bar-pct{font-size:.74rem;font-weight:800;color:#a1a1aa;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cat-bar-pct small{display:block;font-size:.62rem;font-weight:700;color:#71717a}
+
+/* ============================================================
+   Reporte imprimible
+   ============================================================ */
+@media print{
+  html,body{background:#fff!important}
+  header,main,footer,.scroll-top-button,.whatsapp-float,.toast{display:none!important}
+  .modal-backdrop:not(:has(#reporte-ticket)){display:none!important}
+  .modal-backdrop{position:static!important;display:block!important;padding:0!important;background:none!important;backdrop-filter:none!important;place-items:initial!important;z-index:auto!important}
+  .reporte-modal{max-width:100%!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;border:1px solid #ccc!important;padding:1.25rem!important;background:#fff!important;border-radius:0!important}
+  .reporte-print-actions{display:none!important}
+  .reporte-close{display:none!important}
+  #reporte-ticket{background:#fff!important;color:#111!important}
+  #reporte-ticket .plan-tag,#reporte-ticket h3,#reporte-ticket .stat-label,#reporte-ticket .stat-sub,
+  #reporte-ticket .stat-num,#reporte-ticket .text-dim,#reporte-ticket .cat-bar-name,#reporte-ticket .cat-bar-pct,
+  #reporte-ticket .admin-table tbody td,#reporte-ticket .admin-table thead th{color:#111!important}
+  #reporte-ticket .panel-card,#reporte-ticket .table-wrap{background:#fff!important;box-shadow:none!important;border-color:#ccc!important}
+  #reporte-ticket .admin-table thead th{background:#f2f2f2!important;color:#444!important}
+  #reporte-ticket .admin-table tbody tr:hover{background:#fff!important}
+  #reporte-ticket .text-red-400{color:#b00020!important}
+  #reporte-ticket .text-gold-300{color:#92400e!important}
+  #reporte-ticket .plan-chip,#reporte-ticket .cat-chip{color:#333!important;border-color:#bbb!important;background:#f5f5f5!important}
+}
+
+/* ============================================================
+   Adaptación móvil — hardening responsive
+   ============================================================ */
+.stat-card>*{min-width:0}
+.stat-num{overflow-wrap:anywhere;word-break:break-word}
+
+@media (max-width:419px){
+  .guide-grid{grid-template-columns:1fr!important}
+  .rutina-card{padding:1.25rem}
+  .rutina-card > div:first-child > .flex{flex-wrap:wrap;row-gap:.55rem}
+  .rutina-card .flex .flex{min-width:0}
+  .rutina-card .flex .flex > div{min-width:0;overflow-wrap:anywhere}
+}
+
+@media (max-width:640px){
+  .stat-card{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.6rem;
+    padding:1rem 1.05rem;
+  }
+  .stat-card .stat-icon{
+    width:2.5rem;
+    height:2.5rem;
+    border-radius:.75rem;
+  }
+  .stat-card .stat-icon svg{width:1.2rem;height:1.2rem}
+  .stat-num{font-size:1.35rem;line-height:1.1}
+  .stat-label{font-size:.66rem;letter-spacing:.08em;margin-top:.4rem}
+  .stat-sub{font-size:.68rem}
+
+  .cat-bar-row{grid-template-columns:minmax(0,1fr) auto;row-gap:.35rem}
+  .cat-bar-track{grid-column:1/-1;grid-row:2}
+  .cat-bar-pct small{display:inline-block;margin-left:.25rem}
+}

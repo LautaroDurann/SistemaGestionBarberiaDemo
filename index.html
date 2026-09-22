@@ -122,7 +122,7 @@
                         <p class="mt-5 text-lg leading-8 text-zinc-300">Herramientas profesionales, técnica de navaja y un ambiente donde el detalle no se negocia.</p>
                         <a href="#" @click.prevent="irA('turnos')" class="btn-secondary mt-8 inline-flex">Agendar mi turno</a>
                     </div>
-                    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-0">
+                    <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-0">
                         <article class="feature-card is-visible">
                             <span class="feature-num" aria-hidden="true">01</span>
                             <span class="icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7l3-1 2-3M20 7l-3-1-2-3M9 3h6M5 10l1.8 3M19 10l-1.8 3M7.5 20l.7-4h7.6l.7 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
@@ -258,7 +258,7 @@
                     <div class="mt-8 space-y-4 text-sm font-semibold text-zinc-200">
                         <p>Ubicación: <a class="text-gold-200 underline decoration-gold-500/50 underline-offset-4 hover:text-white" href="https://maps.app.goo.gl/gAxG2rYafcoK8HqXA" target="_blank" rel="noopener">Sáenz Peña, Chaco, Argentina</a></p>
                         <p>WhatsApp: <a class="text-gold-200 underline decoration-gold-500/50 underline-offset-4 hover:text-white" href="https://wa.me/5493644811000" target="_blank" rel="noopener">+54 9 3644 811000</a></p>
-                        <p>Instagram: <a class="text-gold-200 underline decoration-gold-500/50 underline-offset-4 hover:text-white" href="https://www.instagram.com/nova.gym/" target="_blank" rel="noopener">@nova.barberia</a></p>
+                        <p>Instagram: <a class="text-gold-200 underline decoration-gold-500/50 underline-offset-4 hover:text-white" href="https://www.instagram.com/nova.barberia/" target="_blank" rel="noopener">@nova.barberia</a></p>
                     </div>
                     <div class="panel-card mt-8 flex items-center gap-4 p-5">
                         <div class="stat-icon" style="color:#fbbf24"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-4.4-6.5-9.6A6.5 6.5 0 0 1 12 5a6.5 6.5 0 0 1 6.5 6.4C18.5 16.6 12 21 12 21Z"/><circle cx="12" cy="11" r="2.2"/></svg></div>
@@ -270,7 +270,7 @@
                 </div>
 
                 <form class="contact-form is-visible" @submit.prevent="mostrarToast('Consulta recibida. Te respondemos por WhatsApp a la brevedad.')">
-                    <div class="grid gap-5 sm:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <label class="field">Nombre
                             <input name="nombre" required autocomplete="given-name" class="input">
                         </label>
@@ -278,7 +278,7 @@
                             <input name="apellido" required autocomplete="family-name" class="input">
                         </label>
                     </div>
-                    <div class="grid gap-5 sm:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <label class="field">Email
                             <input type="email" name="email" required autocomplete="email" class="input">
                         </label>
@@ -417,6 +417,10 @@
                         <button class="filter-tab" :class="filtroEstadoTurno==='cancelado' && 'active'" @click="filtroEstadoTurno='cancelado'">Cancelados</button>
                     </div>
                     <div class="flex flex-col gap-3 md:flex-row md:items-center">
+                        <div class="search-box" style="min-width:13rem">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                            <input type="search" class="input" placeholder="Buscar por cliente, barbero o servicio…" x-model="buscarTurno">
+                        </div>
                         <div class="relative" style="min-width:10rem">
                             <select class="input" x-model="filtroFechaTurno" style="width:100%">
                                 <option value="proximos">Próximos turnos</option>
@@ -516,7 +520,7 @@
                             <button class="btn-panel" type="button" @click="cargarDemo()">Cargar datos demo</button>
                         </template>
                         <template x-if="turnos.length > 0">
-                            <button class="btn-panel" type="button" @click="filtroEstadoTurno='todos'; filtroFechaTurno='proximos'; filtroBarbero='todos'">Limpiar filtros</button>
+                            <button class="btn-panel" type="button" @click="filtroEstadoTurno='todos'; filtroFechaTurno='proximos'; filtroBarbero='todos'; buscarTurno=''">Limpiar filtros</button>
                         </template>
                     </div>
                 </div>
@@ -773,6 +777,7 @@
                         <p class="mt-4 text-base leading-7 text-zinc-300">Los ingresos se calculan automáticamente con los cortes completados en turnos. Registrá gastos como sueldos, luz o alquiler para ver el balance del mes.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <button class="btn-panel btn-ghost-sky" type="button" @click="abrirReporte()">Imprimir reporte</button>
                         <button class="btn-panel" type="button" @click="cargarDemoGastos()">Cargar gastos demo</button>
                         <button class="btn-panel" type="button" @click="vaciarGastos()">Vaciar gastos</button>
                         <button class="btn-panel btn-green" type="button" @click="abrirFormGasto()">+ Nuevo gasto</button>
@@ -863,8 +868,34 @@
                     </div>
                 </div>
 
+                <!-- desglose por categoría -->
+                <div class="panel-card mt-8 p-6">
+                    <div class="flex flex-wrap items-end justify-between gap-3">
+                        <div>
+                            <p class="eyebrow" style="margin:0">Gastos por categoría</p>
+                            <h3 class="mt-1 text-xl font-black">Desglose del período</h3>
+                        </div>
+                        <span class="plan-chip" x-text="'$' + totalGastos(mesFiltro).toLocaleString('es-AR')"></span>
+                    </div>
+                    <div class="cat-bars mt-6" x-show="gastosMes(mesFiltro).length > 0">
+                        <template x-for="g in gastosPorCategoria(mesFiltro)" :key="'cat-' + g.cat">
+                            <div class="cat-bar-row">
+                                <span class="cat-bar-name" x-text="g.label"></span>
+                                <div class="cat-bar-track">
+                                    <div class="cat-bar-fill" :style="'width:' + g.pct + '%;background:linear-gradient(90deg,' + categoriaGastoColor(g.cat) + ',' + categoriaGastoColor(g.cat) + '99)'" :title="'$' + g.total.toLocaleString('es-AR')"></div>
+                                </div>
+                                <span class="cat-bar-pct"><span x-text="'$' + g.total.toLocaleString('es-AR')"></span><small x-text="g.pct + '%'"></small></span>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="empty-state mt-6" x-show="gastosMes(mesFiltro).length === 0">
+                        <p class="font-black">Sin gastos en este período</p>
+                        <p class="mt-2 text-sm text-zinc-400">Cargá gastos para ver el desglose por categoría y el peso de cada uno en el mes.</p>
+                    </div>
+                </div>
+
                 <!-- detalle ingresos / gastos -->
-                <div class="mt-8 grid gap-6 lg:grid-cols-2">
+                <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
 
                     <!-- ingresos -->
                     <div class="panel-card p-6">
@@ -1154,15 +1185,38 @@
                     <button class="modal-close" type="button" aria-label="Cerrar" @click="detalle=null">✕</button>
                 </div>
 
-                <div class="grid gap-4 sm:grid-cols-3">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div class="panel-card p-4">
                         <p class="stat-label">Visitas</p>
                         <p class="mt-1 font-bold" x-text="visitasCliente(detalle)"></p>
                         <p class="text-xs text-dim" x-text="ultimaVisitaCliente(detalle) ? 'Última: ' + fmtFecha(ultimaVisitaCliente(detalle)) : 'Sin visitas'"></p>
                     </div>
                     <div class="panel-card p-4">
+                        <p class="stat-label">Gasto total</p>
+                        <p class="mt-1 font-bold text-gold-300" x-text="'$' + gastoTotalCliente(detalle).toLocaleString('es-AR')"></p>
+                        <p class="text-xs text-dim" x-text="visitasCliente(detalle) ? 'Promedio: $' + Math.round(gastoPromedioCliente(detalle)).toLocaleString('es-AR') + ' por visita' : 'Aún sin gastos'"></p>
+                    </div>
+                    <div class="panel-card p-4">
+                        <p class="stat-label">Frecuencia</p>
+                        <p class="mt-1 font-bold" x-text="frecuenciaClienteLabel(detalle)"></p>
+                        <p class="text-xs text-dim" x-text="visitasCliente(detalle) + (visitasCliente(detalle) === 1 ? ' visita registrada' : ' visitas registradas')"></p>
+                    </div>
+                    <div class="panel-card p-4">
                         <p class="stat-label">Corte preferido</p>
                         <p class="mt-1 font-bold" x-text="detalle.corteFavoritoId ? corteNombre(detalle.corteFavoritoId) : 'Sin definir'"></p>
+                        <p class="text-xs text-dim">Preferencia registrada</p>
+                    </div>
+                    <div class="panel-card p-4">
+                        <p class="stat-label">Último corte</p>
+                        <template x-if="ultimoCorteCliente(detalle)">
+                            <div>
+                                <p class="mt-1 font-bold text-gold-300" x-text="ultimoCorteCliente(detalle).nombre"></p>
+                                <p class="text-xs text-dim" x-text="'Realizado: ' + fmtFecha(ultimoCorteCliente(detalle).fecha)"></p>
+                            </div>
+                        </template>
+                        <template x-if="!ultimoCorteCliente(detalle)">
+                            <p class="mt-1 font-bold text-zinc-500">Sin cortes realizados</p>
+                        </template>
                     </div>
                     <div class="panel-card p-4">
                         <p class="stat-label">Próximo turno</p>
@@ -1172,6 +1226,7 @@
                         <template x-if="!proximoTurnoCliente(detalle)">
                             <p class="mt-1 font-bold text-zinc-500">Sin turno</p>
                         </template>
+                        <p class="text-xs text-dim" x-text="proximoTurnoCliente(detalle) ? proximoTurnoDelta(proximoTurnoCliente(detalle).fecha) : 'Sugerencia: agendá su próxima visita'"></p>
                     </div>
                 </div>
 
@@ -1422,6 +1477,25 @@
     </div>
 </div>
 
+<!-- confirmación genérica -->
+<div class="modal-backdrop" x-show="confirmState" x-cloak x-transition @click.self="confirmCancel()">
+    <div class="modal" style="max-width:26rem" x-show="confirmState" x-transition>
+        <template x-if="confirmState">
+            <div class="text-center">
+                <div class="mx-auto grid h-14 w-14 place-items-center rounded-2xl border" :class="confirmState.peligroso ? 'bg-red-500/10 border-red-500/25 text-red-400' : 'bg-gold-500/15 border-gold-400/30 text-gold-300'">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+                </div>
+                <h3 class="mt-4 text-xl font-black" x-text="confirmState.titulo"></h3>
+                <p class="mt-2 text-sm leading-6 text-zinc-400" x-text="confirmState.mensaje"></p>
+                <div class="mt-6 flex gap-3">
+                    <button type="button" class="btn-panel w-full justify-center" :class="confirmState.peligroso ? 'btn-danger' : 'btn-green'" @click="confirmOk()">Sí, continuar</button>
+                    <button type="button" class="btn-panel w-full justify-center" @click="confirmCancel()">Cancelar</button>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
 <!-- formulario de gasto -->
 <div class="modal-backdrop" x-show="gastoFormAbierto" x-cloak x-transition @click.self="gastoFormAbierto=false" style="z-index:130">
     <div class="modal" style="max-width:26rem" x-show="gastoFormAbierto" x-transition>
@@ -1463,6 +1537,97 @@
         <div class="mt-6 flex gap-3">
             <button class="btn-panel btn-green w-full justify-center" type="button" @click="guardarGasto()" x-text="liquidacionDe ? 'Cargar liquidación' : (editandoGasto ? 'Guardar cambios' : 'Guardar gasto')"></button>
             <button class="btn-panel w-full justify-center" type="button" @click="gastoFormAbierto=false">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- reporte imprimible -->
+<div class="modal-backdrop" x-show="reporteAbierto" x-cloak x-transition @click.self="reporteAbierto=false" style="z-index:130">
+    <div class="modal modal-lg reporte-modal" x-show="reporteAbierto" x-transition>
+        <div id="reporte-ticket" class="reporte-ticket">
+            <div class="modal-head reporte-head">
+                <div>
+                    <p class="plan-tag">Reporte de gestión · NOVA BARBERÍA</p>
+                    <h3 class="mt-1 text-2xl font-black" x-text="'Finanzas — ' + labelMes(mesFiltro)"></h3>
+                    <p class="text-xs text-dim" x-text="'Generado el ' + fmtFecha(hoyISO()) + ' · ' + cortesRealizados(mesFiltro) + ' cortes completados'"></p>
+                </div>
+                <button class="modal-close reporte-close" type="button" aria-label="Cerrar" @click="reporteAbierto=false">✕</button>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 reporte-stats">
+                <div class="panel-card stat-card" style="--glow:rgba(251,191,36,.18)">
+                    <div>
+                        <p class="stat-num text-gold-300" x-text="'$' + totalIngresos(mesFiltro).toLocaleString('es-AR')"></p>
+                        <p class="stat-label">Ingresos</p>
+                        <p class="stat-sub" x-text="cortesRealizados(mesFiltro) + (cortesRealizados(mesFiltro) === 1 ? ' corte' : ' cortes')"></p>
+                    </div>
+                </div>
+                <div class="panel-card stat-card" style="--glow:rgba(248,113,113,.16)">
+                    <div>
+                        <p class="stat-num text-red-400" x-text="'$' + totalGastos(mesFiltro).toLocaleString('es-AR')"></p>
+                        <p class="stat-label">Egresos</p>
+                        <p class="stat-sub" x-text="gastosMes(mesFiltro).length + (gastosMes(mesFiltro).length === 1 ? ' gasto' : ' gastos')"></p>
+                    </div>
+                </div>
+                <div class="panel-card stat-card" style="--glow:rgba(255,255,255,.1)">
+                    <div>
+                        <p class="stat-num" :class="balance(mesFiltro) >= 0 ? 'text-gold-300' : 'text-red-400'" x-text="(balance(mesFiltro) < 0 ? '−$' : '$') + Math.abs(balance(mesFiltro)).toLocaleString('es-AR')"></p>
+                        <p class="stat-label">Balance</p>
+                        <p class="stat-sub" x-text="balance(mesFiltro) >= 0 ? 'Resultado positivo' : 'Resultado negativo'"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 reporte-grid">
+                <div class="panel-card p-5">
+                    <h3 class="text-lg font-black">Ingresos del período</h3>
+                    <div class="table-wrap mt-4" x-show="ingresosMes(mesFiltro).length > 0">
+                        <table class="admin-table" style="min-width:460px">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Servicio</th>
+                                    <th style="text-align:right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="p in ingresosMes(mesFiltro)" :key="'rep-ing-' + p.ref.id">
+                                    <tr>
+                                        <td class="text-dim" x-text="fmtFecha(p.fecha)"></td>
+                                        <td class="font-semibold" x-text="p.cliente"></td>
+                                        <td class="text-dim" x-text="p.corte"></td>
+                                        <td class="font-bold text-gold-300" style="text-align:right" x-text="'+$' + p.monto.toLocaleString('es-AR')"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm text-zinc-500" x-show="ingresosMes(mesFiltro).length === 0">Sin ingresos en el período.</p>
+                </div>
+                <div class="panel-card p-5">
+                    <h3 class="text-lg font-black">Gastos por categoría</h3>
+                    <div class="cat-bars mt-4" x-show="gastosMes(mesFiltro).length > 0">
+                        <template x-for="g in gastosPorCategoria(mesFiltro)" :key="'rep-cat-' + g.cat">
+                            <div class="cat-bar-row">
+                                <span class="cat-bar-name" x-text="g.label"></span>
+                                <div class="cat-bar-track">
+                                    <div class="cat-bar-fill" :style="'width:' + g.pct + '%;background:linear-gradient(90deg,' + categoriaGastoColor(g.cat) + ',' + categoriaGastoColor(g.cat) + '99)'"></div>
+                                </div>
+                                <span class="cat-bar-pct" x-text="'$' + g.total.toLocaleString('es-AR')"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <p class="text-sm text-zinc-500" x-show="gastosMes(mesFiltro).length === 0">Sin gastos en el período.</p>
+                </div>
+            </div>
+
+            <p class="mt-6 text-xs text-zinc-500">Prototipo de gestión NOVA BARBERÍA — datos guardados en el navegador (localStorage).</p>
+        </div>
+
+        <div class="reporte-print-actions mt-4 flex flex-col gap-3 sm:flex-row">
+            <button class="btn-primary w-full justify-center" type="button" @click="window.print()">Imprimir / Guardar PDF</button>
+            <button class="btn-secondary justify-center" type="button" @click="reporteAbierto=false">Cerrar</button>
         </div>
     </div>
 </div>
