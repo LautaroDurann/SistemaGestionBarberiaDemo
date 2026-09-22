@@ -329,7 +329,7 @@
                 </div>
 
                 <div class="mt-10 grid gap-6 guide-grid">
-                    <template x-for="c in cortesFiltrados()" :key="c.id">
+                    <template x-for="c in paginar(cortesFiltrados(), 'cortes')" :key="c.id">
                         <article class="price-card rutina-card is-visible corte-card">
                             <div>
                                 <div class="flex items-center justify-between gap-3">
@@ -350,6 +350,15 @@
                             </div>
                         </article>
                     </template>
+                </div>
+
+                <div class="paginador" x-show="totalPaginas(cortesFiltrados()) > 1">
+                    <p class="pg-info" x-text="infoPagina('cortes', cortesFiltrados().length)"></p>
+                    <button class="pg-btn" type="button" :disabled="pagActual('cortes') === 1" @click="irPagina('cortes', pagActual('cortes') - 1)">‹</button>
+                    <template x-for="n in rangoPaginas(totalPaginas(cortesFiltrados()))" :key="'pg-c-' + n">
+                        <button class="pg-btn" type="button" :class="pagActual('cortes') === n && 'active'" @click="irPagina('cortes', n)" x-text="n"></button>
+                    </template>
+                    <button class="pg-btn" type="button" :disabled="pagActual('cortes') === totalPaginas(cortesFiltrados())" @click="irPagina('cortes', pagActual('cortes') + 1)">›</button>
                 </div>
             </div>
         </section>
@@ -454,7 +463,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(t, i) in turnosFiltrados()" :key="t.id">
+                            <template x-for="(t, i) in paginar(turnosFiltrados(), 'turnos')" :key="t.id">
                                 <tr>
                                     <td>
                                         <div class="agenda-mini">
@@ -506,6 +515,15 @@
                             </template>
                         </tbody>
                     </table>
+                </div>
+
+                <div class="paginador" x-show="totalPaginas(turnosFiltrados()) > 1">
+                    <p class="pg-info" x-text="infoPagina('turnos', turnosFiltrados().length)"></p>
+                    <button class="pg-btn" type="button" :disabled="pagActual('turnos') === 1" @click="irPagina('turnos', pagActual('turnos') - 1)">‹</button>
+                    <template x-for="n in rangoPaginas(totalPaginas(turnosFiltrados()))" :key="'pg-t-' + n">
+                        <button class="pg-btn" type="button" :class="pagActual('turnos') === n && 'active'" @click="irPagina('turnos', n)" x-text="n"></button>
+                    </template>
+                    <button class="pg-btn" type="button" :disabled="pagActual('turnos') === totalPaginas(turnosFiltrados())" @click="irPagina('turnos', pagActual('turnos') + 1)">›</button>
                 </div>
 
                 <!-- vacío -->
@@ -605,7 +623,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="c in clientesFiltrados()" :key="c.id">
+                            <template x-for="c in paginar(clientesFiltrados(), 'clientes')" :key="c.id">
                                 <tr>
                                     <td>
                                         <div class="flex items-center gap-3">
@@ -642,6 +660,15 @@
                             </template>
                         </tbody>
                     </table>
+                </div>
+
+                <div class="paginador" x-show="totalPaginas(clientesFiltrados()) > 1">
+                    <p class="pg-info" x-text="infoPagina('clientes', clientesFiltrados().length)"></p>
+                    <button class="pg-btn" type="button" :disabled="pagActual('clientes') === 1" @click="irPagina('clientes', pagActual('clientes') - 1)">‹</button>
+                    <template x-for="n in rangoPaginas(totalPaginas(clientesFiltrados()))" :key="'pg-cl-' + n">
+                        <button class="pg-btn" type="button" :class="pagActual('clientes') === n && 'active'" @click="irPagina('clientes', n)" x-text="n"></button>
+                    </template>
+                    <button class="pg-btn" type="button" :disabled="pagActual('clientes') === totalPaginas(clientesFiltrados())" @click="irPagina('clientes', pagActual('clientes') + 1)">›</button>
                 </div>
 
                 <!-- vacío -->
@@ -725,7 +752,7 @@
 
                 <!-- grid -->
                 <div class="mt-10 grid gap-6 guide-grid">
-                    <template x-for="p in personalFiltrados()" :key="p.id">
+                    <template x-for="p in paginar(personalFiltrados(), 'personal')" :key="p.id">
                         <article class="price-card rutina-card is-visible">
                             <div>
                                 <div class="flex items-center justify-between gap-3">
@@ -752,6 +779,15 @@
                             </div>
                         </article>
                     </template>
+                </div>
+
+                <div class="paginador" x-show="totalPaginas(personalFiltrados()) > 1">
+                    <p class="pg-info" x-text="infoPagina('personal', personalFiltrados().length)"></p>
+                    <button class="pg-btn" type="button" :disabled="pagActual('personal') === 1" @click="irPagina('personal', pagActual('personal') - 1)">‹</button>
+                    <template x-for="n in rangoPaginas(totalPaginas(personalFiltrados()))" :key="'pg-p-' + n">
+                        <button class="pg-btn" type="button" :class="pagActual('personal') === n && 'active'" @click="irPagina('personal', n)" x-text="n"></button>
+                    </template>
+                    <button class="pg-btn" type="button" :disabled="pagActual('personal') === totalPaginas(personalFiltrados())" @click="irPagina('personal', pagActual('personal') + 1)">›</button>
                 </div>
 
                 <!-- vacío -->
@@ -965,7 +1001,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="g in gastosMes(mesFiltro)" :key="'gasto-' + g.id">
+                                    <template x-for="g in paginar(gastosMes(mesFiltro), 'gastos')" :key="'gasto-' + g.id">
                                         <tr>
                                             <td class="text-dim" x-text="fmtFecha(g.fecha)"></td>
                                             <td><span class="cat-chip" :class="categoriaGastoBadge(g.categoria)" x-text="categoriaGastoLabel(g.categoria)"></span></td>
@@ -981,6 +1017,14 @@
                                     </template>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="paginador" x-show="totalPaginas(gastosMes(mesFiltro)) > 1">
+                            <p class="pg-info" x-text="infoPagina('gastos', gastosMes(mesFiltro).length)"></p>
+                            <button class="pg-btn" type="button" :disabled="pagActual('gastos') === 1" @click="irPagina('gastos', pagActual('gastos') - 1)">‹</button>
+                            <template x-for="n in rangoPaginas(totalPaginas(gastosMes(mesFiltro)))" :key="'pg-g-' + n">
+                                <button class="pg-btn" type="button" :class="pagActual('gastos') === n && 'active'" @click="irPagina('gastos', n)" x-text="n"></button>
+                            </template>
+                            <button class="pg-btn" type="button" :disabled="pagActual('gastos') === totalPaginas(gastosMes(mesFiltro))" @click="irPagina('gastos', pagActual('gastos') + 1)">›</button>
                         </div>
                         <div class="empty-state mt-4" x-show="gastosMes(mesFiltro).length === 0">
                             <p class="font-black">Sin gastos en este período</p>

@@ -82,6 +82,9 @@ const CATEGORIAS_GASTO = {
   otros: 'Otros',
 };
 
+/* ---------- paginación ---------- */
+const POR_PAGINA = 12;
+
 /* ---------- cortes base ---------- */
 const CORTES_BASE = [
   { id: 'clasico', nombre: 'Corte clásico', categoria: 'clasico', descripcion: 'El corte de siempre: prolijo, versátil y con acabado perfecto.', precio: 18000, duracion: 30 },
@@ -267,6 +270,9 @@ document.addEventListener('alpine:init', () => {
     formGasto: null,
     liquidacionDe: null,
 
+    /* paginación de listas */
+    paginas: { cortes: 1, turnos: 1, clientes: 1, personal: 1, gastos: 1 },
+
     init() {
       this.formCorte = this.nuevoFormCorte();
       this.form = this.nuevoForm();
@@ -293,6 +299,16 @@ document.addEventListener('alpine:init', () => {
 
       const rawG = localStorage.getItem('nova_barber_gastos_v1');
       if (rawG) { try { this.gastos = JSON.parse(rawG); } catch { this.gastos = []; } }
+
+      const volverPagina1 = (clave) => () => { this.paginas[clave] = 1; };
+      this.$watch('buscarCliente', volverPagina1('clientes'));
+      this.$watch('filtroRol', volverPagina1('personal'));
+      this.$watch('filtroCorte', volverPagina1('cortes'));
+      this.$watch('buscarTurno', volverPagina1('turnos'));
+      this.$watch('filtroEstadoTurno', volverPagina1('turnos'));
+      this.$watch('filtroFechaTurno', volverPagina1('turnos'));
+      this.$watch('filtroBarbero', volverPagina1('turnos'));
+      this.$watch('mesFiltro', volverPagina1('gastos'));
     },
 
     /* --------------- navegación --------------- */
@@ -332,6 +348,27 @@ document.addEventListener('alpine:init', () => {
     },
 
     /* --------------- utilidades --------------- */
+    paginar(lista, clave) {
+      const per = POR_PAGINA;
+      const max = this.totalPaginas(lista);
+      let p = this.paginas[clave] || 1;
+      if (p > max) { p = max; this.paginas[clave] = p; }
+      return lista.slice((p - 1) * per, p * per);
+    },
+    totalPaginas(lista) { return Math.max(1, Math.ceil(lista.length / POR_PAGINA)); },
+    rangoPaginas(total) {
+      const n = Math.max(1, total);
+      return Array.from({ length: n }, (_, i) => i + 1);
+    },
+    pagActual(clave) { return this.paginas[clave] || 1; },
+    irPagina(clave, n) { this.paginas[clave] = Math.max(1, n); },
+    infoPagina(clave, total) {
+      const per = POR_PAGINA;
+      const p = this.pagActual(clave);
+      const desde = total ? (p - 1) * per + 1 : 0;
+      const hasta = Math.min(p * per, total);
+      return `Mostrando ${desde}–${hasta} de ${total}`;
+    },
     slugObj(v) {
       return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
     },
