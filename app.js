@@ -84,21 +84,21 @@ const CATEGORIAS_GASTO = {
 
 /* ---------- cortes base ---------- */
 const CORTES_BASE = [
-  { id: 'clasico', nombre: 'Corte clásico', categoria: 'clasico', descripcion: 'El corte de siempre: prolijo, versátil y con acabado perfecto.', precio: 6000, duracion: 30 },
-  { id: 'fade', nombre: 'Fade', categoria: 'fade', descripcion: 'Degradado de precisión con navaja. Diseño moderno y marcado.', precio: 8000, duracion: 40 },
-  { id: 'barba', nombre: 'Arreglo de barba', categoria: 'barba', descripcion: 'Delineado a navaja, perfilado y terminación con toalla caliente.', precio: 5000, duracion: 25 },
-  { id: 'combo', nombre: 'Corte + barba', categoria: 'combo', descripcion: 'Experiencia completa: corte a elección y barba delineada.', precio: 12000, duracion: 60 },
-  { id: 'navaja', nombre: 'Corte a navaja', categoria: 'clasico', descripcion: 'Técnica clásica con navaja y afeitado tradicional.', precio: 7500, duracion: 35 },
-  { id: 'kids', nombre: 'Corte infantil', categoria: 'otros', descripcion: 'Corte prolijo para los más chicos, rápido y sin vueltas.', precio: 4500, duracion: 25 },
-  { id: 'tinte', nombre: 'Tinte / color', categoria: 'color', descripcion: 'Coloración o tinte para cambiar de look con asesoramiento.', precio: 10000, duracion: 60 },
-  { id: 'maquina', nombre: 'Máquina + delineado', categoria: 'fade', descripcion: 'Corte a máquina con delinear filo de navaja.', precio: 6500, duracion: 30 },
+  { id: 'clasico', nombre: 'Corte clásico', categoria: 'clasico', descripcion: 'El corte de siempre: prolijo, versátil y con acabado perfecto.', precio: 18000, duracion: 30 },
+  { id: 'fade', nombre: 'Fade', categoria: 'fade', descripcion: 'Degradado de precisión con navaja. Diseño moderno y marcado.', precio: 25000, duracion: 40 },
+  { id: 'barba', nombre: 'Arreglo de barba', categoria: 'barba', descripcion: 'Delineado a navaja, perfilado y terminación con toalla caliente.', precio: 15000, duracion: 25 },
+  { id: 'combo', nombre: 'Corte + barba', categoria: 'combo', descripcion: 'Experiencia completa: corte a elección y barba delineada.', precio: 25000, duracion: 60 },
+  { id: 'navaja', nombre: 'Corte a navaja', categoria: 'clasico', descripcion: 'Técnica clásica con navaja y afeitado tradicional.', precio: 21000, duracion: 35 },
+  { id: 'kids', nombre: 'Corte infantil', categoria: 'otros', descripcion: 'Corte prolijo para los más chicos, rápido y sin vueltas.', precio: 15000, duracion: 25 },
+  { id: 'tinte', nombre: 'Tinte / color', categoria: 'color', descripcion: 'Coloración o tinte para cambiar de look con asesoramiento.', precio: 25000, duracion: 60 },
+  { id: 'maquina', nombre: 'Máquina + delineado', categoria: 'fade', descripcion: 'Corte a máquina con delinear filo de navaja.', precio: 17000, duracion: 30 },
 ];
 
 const PERSONAL_BASE = [
   { id: 1, nombre: 'Marcelo', apellido: 'Torres', rol: 'dueno', telefono: '+54 9 3644 100001', email: 'marcelo@novabarber.com', horario: 'Atención general', sueldo: 0, fechaIngreso: '2019-08-01', activo: true, notas: 'Dueño y fundador.' },
-  { id: 2, nombre: 'Juan', apellido: 'Ríos', rol: 'barbero', telefono: '+54 9 3644 100002', email: 'juan@novabarber.com', horario: 'Mar a Sáb 9-13 y 16-21', sueldo: 160000, fechaIngreso: '2021-03-10', activo: true, notas: 'Especialista en fades y navaja.' },
-  { id: 3, nombre: 'Lucas', apellido: 'Fernández', rol: 'barbero', telefono: '+54 9 3644 100003', email: 'lucas@novabarber.com', horario: 'Lun a Vie 14-21 · Sáb 9-13', sueldo: 150000, fechaIngreso: '2022-06-15', activo: true, notas: 'Cortes clásicos y barba.' },
-  { id: 4, nombre: 'Agustina', apellido: 'Vega', rol: 'secretario', telefono: '+54 9 3644 100004', email: 'agustina@novabarber.com', horario: 'Lun a Sáb 9-13 y 16-21', sueldo: 120000, fechaIngreso: '2023-01-09', activo: true, notas: 'Maneja turnos y caja.' },
+  { id: 2, nombre: 'Juan', apellido: 'Ríos', rol: 'barbero', telefono: '+54 9 3644 100002', email: 'juan@novabarber.com', horario: 'Mar a Sáb 9-13 y 16-21', sueldo: 2000000, fechaIngreso: '2021-03-10', activo: true, notas: 'Especialista en fades y navaja.' },
+  { id: 3, nombre: 'Lucas', apellido: 'Fernández', rol: 'barbero', telefono: '+54 9 3644 100003', email: 'lucas@novabarber.com', horario: 'Lun a Vie 14-21 · Sáb 9-13', sueldo: 1800000, fechaIngreso: '2022-06-15', activo: true, notas: 'Cortes clásicos y barba.' },
+  { id: 4, nombre: 'Agustina', apellido: 'Vega', rol: 'secretario', telefono: '+54 9 3644 100004', email: 'agustina@novabarber.com', horario: 'Lun a Sáb 9-13 y 16-21', sueldo: 1500000, fechaIngreso: '2023-01-09', activo: true, notas: 'Maneja turnos y caja.' },
 ];
 
 /* ---------- generación de datos demo ---------- */
@@ -193,9 +193,9 @@ function generarDemoGastos() {
   const hoy = hoyISO();
   const d = (off) => sumarDiasISO(hoy, off);
   return [
-    { id: 1,  fecha: d(0),   categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Juan Ríos (barbero)', monto: 160000 },
-    { id: 2,  fecha: d(0),   categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Lucas Fernández (barbero)', monto: 150000 },
-    { id: 3,  fecha: d(0),   categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Agustina Vega (secretaria)', monto: 120000 },
+    { id: 1,  fecha: d(0),   categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Juan Ríos (barbero)', monto: 2000000 },
+    { id: 2,  fecha: d(0),   categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Lucas Fernández (barbero)', monto: 1800000 },
+    { id: 3,  fecha: d(0),   categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Agustina Vega (secretaria)', monto: 1500000 },
     { id: 4,  fecha: d(-2),  categoria: 'servicios', descripcion: 'Luz', monto: 46200 },
     { id: 5,  fecha: d(-3),  categoria: 'alquiler', descripcion: 'Alquiler del local', monto: 180000 },
     { id: 6,  fecha: d(-6),  categoria: 'insumos', descripcion: 'Shampoo, tintes y productos para barba', monto: 38500 },
@@ -203,9 +203,9 @@ function generarDemoGastos() {
     { id: 8,  fecha: d(-12), categoria: 'equipamiento', descripcion: 'Juego de máquinas y tijeras nuevas', monto: 145000 },
     { id: 9,  fecha: d(-16), categoria: 'marketing', descripcion: 'Publicidad en redes', monto: 12000 },
     { id: 10, fecha: d(-30), categoria: 'alquiler', descripcion: 'Alquiler del local', monto: 180000 },
-    { id: 11, fecha: d(-30), categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Juan Ríos (barbero)', monto: 160000 },
-    { id: 12, fecha: d(-30), categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Lucas Fernández (barbero)', monto: 150000 },
-    { id: 13, fecha: d(-30), categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Agustina Vega (secretaria)', monto: 120000 },
+    { id: 11, fecha: d(-30), categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Juan Ríos (barbero)', monto: 2000000 },
+    { id: 12, fecha: d(-30), categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Lucas Fernández (barbero)', monto: 1800000 },
+    { id: 13, fecha: d(-30), categoria: 'sueldos', descripcion: 'Liquidación de sueldo — Agustina Vega (secretaria)', monto: 1500000 },
     { id: 14, fecha: d(-32), categoria: 'servicios', descripcion: 'Luz', monto: 44100 },
     { id: 15, fecha: d(-60), categoria: 'alquiler', descripcion: 'Alquiler del local', monto: 180000 },
     { id: 16, fecha: d(-60), categoria: 'insumos', descripcion: 'Reposición de toallas y descartables', monto: 21400 },
